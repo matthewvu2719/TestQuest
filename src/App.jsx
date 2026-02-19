@@ -12,6 +12,12 @@ function App() {
   const [activeTab, setActiveTab] = useState('training')
   const [topic, setTopic] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
+  const [quizState, setQuizState] = useState({
+    currentQuestion: 0,
+    selectedAnswers: {},
+    showResults: false,
+    reviewMode: false
+  })
   const [showFruitAdded, setShowFruitAdded] = useState(false)
 
   const resetFruitsWithPopup = () => {
@@ -77,6 +83,13 @@ function App() {
 
   const handleTopicSubmit = (topicText) => {
     generateQuestions(topicText)
+    // Reset quiz state when starting new test
+    setQuizState({
+      currentQuestion: 0,
+      selectedAnswers: {},
+      showResults: false,
+      reviewMode: false
+    })
   }
 
   const handlePomodoroComplete = () => {
@@ -100,7 +113,8 @@ function App() {
       if (isGenerating) {
         return (
           <div className="quiz-card">
-            <div className="loading">Generating quiz questions...</div>
+            <div className="loading">Loading test...
+              Please wait...</div>
           </div>
         )
       }
@@ -117,7 +131,15 @@ function App() {
           onNewTest={() => {
             setTopic('')
             setQuestions([])
+            setQuizState({
+              currentQuestion: 0,
+              selectedAnswers: {},
+              showResults: false,
+              reviewMode: false
+            })
           }}
+          quizState={quizState}
+          setQuizState={setQuizState}
         />
       )
     } else if (activeTab === 'quest') {

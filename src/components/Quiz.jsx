@@ -1,34 +1,37 @@
-import { useState } from 'react'
+function Quiz({ questions, onComplete, isLocked, onNewTest, quizState, setQuizState }) {
+  const { currentQuestion, selectedAnswers, showResults, reviewMode } = quizState
 
-function Quiz({ questions, onComplete, isLocked, onNewTest }) {
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [selectedAnswers, setSelectedAnswers] = useState({})
-  const [showResults, setShowResults] = useState(false)
-  const [reviewMode, setReviewMode] = useState(false)
+  const updateQuizState = (updates) => {
+    setQuizState({ ...quizState, ...updates })
+  }
 
   const handleAnswerSelect = (questionIndex, answerIndex) => {
     if (reviewMode) return // Don't allow selection in review mode
     
-    setSelectedAnswers({
-      ...selectedAnswers,
-      [questionIndex]: answerIndex
+    updateQuizState({
+      selectedAnswers: {
+        ...selectedAnswers,
+        [questionIndex]: answerIndex
+      }
     })
   }
 
   const handleNext = () => {
     if (reviewMode && currentQuestion === questions.length - 1) {
       // In review mode, after last question go back to results
-      setReviewMode(false)
-      setShowResults(true)
-      setCurrentQuestion(0)
+      updateQuizState({
+        reviewMode: false,
+        showResults: true,
+        currentQuestion: 0
+      })
     } else if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
+      updateQuizState({ currentQuestion: currentQuestion + 1 })
     }
   }
 
   const handlePrevious = () => {
     if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1)
+      updateQuizState({ currentQuestion: currentQuestion - 1 })
     }
   }
 
@@ -37,21 +40,19 @@ function Quiz({ questions, onComplete, isLocked, onNewTest }) {
       (q, index) => selectedAnswers[index] === q.correctAnswer
     ).length
     const percentage = (correctAnswers / questions.length) * 100
-    setShowResults(true)
+    updateQuizState({ showResults: true })
     onComplete(percentage)
   }
 
   const handleViewAnswers = () => {
-    setShowResults(false)
-    setReviewMode(true)
-    setCurrentQuestion(0)
+    updateQuizState({
+      showResults: false,
+      reviewMode: true,
+      currentQuestion: 0
+    })
   }
 
   const handleNewTest = () => {
-    setShowResults(false)
-    setReviewMode(false)
-    setCurrentQuestion(0)
-    setSelectedAnswers({})
     onNewTest()
   }
 
