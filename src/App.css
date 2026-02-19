@@ -1,0 +1,730 @@
+@font-face {
+  font-family: 'Minecraft';
+  src: url('/img/Minecraft.ttf') format('truetype');
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Minecraft', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.app {
+  min-height: 100vh;
+  background-image: url('/img/Pink.png');
+  background-repeat: repeat;
+  background-size: auto;
+  image-rendering: pixelated;
+  position: relative;
+}
+
+.decoration {
+  position: absolute;
+  image-rendering: pixelated;
+  animation: float 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.character1 {
+  top: 10%;
+  left: 15%;
+  width: 120px;
+  animation-delay: 0s;
+}
+
+.character2 {
+  top: 15%;
+  right: 10%;
+  width: 120px;
+  animation-delay: 1s;
+}
+
+.bunny {
+  top: 60%;
+  left: 8%;
+  width: 80px;
+  animation-delay: 0.5s;
+}
+
+.chameleon {
+  top: 70%;
+  right: 20%;
+  width: 90px;
+  animation-delay: 1.5s;
+}
+
+.mushroom {
+  bottom: 15%;
+  left: 25%;
+  width: 70px;
+  animation-delay: 2s;
+}
+
+.trunk {
+  bottom: 20%;
+  right: 15%;
+  width: 100px;
+  animation-delay: 2.5s;
+}
+
+.box1 {
+  top: 40%;
+  left: 5%;
+  width: 60px;
+  animation-delay: 0.8s;
+}
+
+.box2 {
+  top: 45%;
+  right: 5%;
+  width: 60px;
+  animation-delay: 1.2s;
+}
+
+.box3 {
+  bottom: 35%;
+  left: 40%;
+  width: 60px;
+  animation-delay: 1.8s;
+}
+
+.box4 {
+  top: 25%;
+  left: 50%;
+  width: 60px;
+  animation-delay: 2.2s;
+}
+
+.box5 {
+  top: 55%;
+  right: 25%;
+  width: 60px;
+  animation-delay: 1s;
+}
+
+.box6 {
+  bottom: 10%;
+  left: 10%;
+  width: 60px;
+  animation-delay: 1.5s;
+}
+
+.box7 {
+  top: 30%;
+  right: 35%;
+  width: 60px;
+  animation-delay: 2.8s;
+}
+
+.box8 {
+  bottom: 45%;
+  right: 8%;
+  width: 60px;
+  animation-delay: 0.3s;
+}
+
+.box9 {
+  top: 75%;
+  left: 35%;
+  width: 60px;
+  animation-delay: 1.3s;
+}
+
+.box10 {
+  top: 12%;
+  left: 30%;
+  width: 60px;
+  animation-delay: 2.5s;
+}
+
+.box11 {
+  bottom: 25%;
+  right: 40%;
+  width: 60px;
+  animation-delay: 0.7s;
+}
+
+.box12 {
+  top: 50%;
+  left: 20%;
+  width: 60px;
+  animation-delay: 1.9s;
+}
+
+/* Header */
+.app-header {
+  position: relative;
+  z-index: 100;
+  padding: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.fruit-counter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fruit-icon {
+  width: 40px;
+  height: 40px;
+  image-rendering: pixelated;
+}
+
+.fruit-count {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 3px 3px 0 #000;
+}
+
+/* Main Content */
+.app-main {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  padding: 20px;
+}
+
+.center-container {
+  width: 100%;
+  max-width: 480px;
+}
+
+/* Tab Navigation */
+.tab-navigation {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 20px;
+  font-size: 1rem;
+  background-image: url('/img/Button.png');
+  background-size: 100% 100%;
+  background-position: center;
+  image-rendering: pixelated;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+  text-shadow: 2px 2px 0 #000;
+  font-weight: normal;
+}
+
+.tab-button:hover {
+  filter: brightness(1.2);
+}
+
+.tab-button.active {
+  filter: brightness(0.6);
+}
+
+/* Main Card */
+.main-card {
+  padding: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  aspect-ratio: 1;
+  width: 100%;
+  position: relative;
+}
+
+.main-card,
+.main-card .quiz-card {
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  height: 100%;
+}
+
+/* Pomodoro Card - with TerrainBox1 background */
+.pomodoro-card {
+  background-image: url('/img/TerrainBox1.png');
+  background-size: 100% 100%;
+  background-position: center;
+  image-rendering: pixelated;
+}
+
+.panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 3fr 1fr;
+  height: 100%;
+  width: 100%;
+  gap: 0;
+}
+
+/* Top 3 tiles */
+.tile-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.tile-left {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.tile-center {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.tile-right {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+/* Center black square */
+.center-square {
+  grid-column: 1 / 4;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.card-title {
+  display: none;
+}
+
+/* Timer */
+.mode-button {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+  text-shadow: 1px 1px 0 #000;
+  font-weight: bold;
+}
+
+.mode-button:hover {
+  color: #ff69b4;
+}
+
+.mode-button.active {
+  color: #ff1493;
+}
+
+.timer-display {
+  font-size: 5rem;
+  text-align: center;
+  color: white;
+  margin: 20px 0;
+  font-weight: bold;
+  letter-spacing: -0.05em;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  text-shadow: 3px 3px 0 #000;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.control-button {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: normal;
+  background: rgba(149, 186, 245, 0.9);
+  color: white;
+  text-shadow: 2px 2px 0 #000;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.control-button:hover:not(:disabled) {
+  background: rgba(255, 0, 163, 0.4);
+  transform: scale(1.05);
+}
+
+.control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Topic Info */
+.topic-info {
+  display: none;
+}
+
+/* Quiz Styles */
+.quiz-card {
+  background: transparent;
+}
+
+.locked-message {
+  text-align: center;
+  font-size: 1.3rem;
+  color: #999;
+  padding: 50px 20px;
+}
+
+.question-counter {
+  text-align: center;
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.question-text {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.answers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.answer-button {
+  padding: 20px;
+  font-size: 1.1rem;
+  background: rgba(149, 186, 245, 0.9);
+  border: 3px solid #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  color: white;
+  text-shadow: 0.5px 0.5px 0 #000;
+}
+
+.answer-button:hover {
+  background: rgba(255, 0, 163, 0.4);
+}
+
+.answer-button.selected {
+  background: rgba(255, 0, 163, 0.4);
+  border-color: #ff1493;
+}
+
+.quiz-controls {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.results-display {
+  text-align: center;
+  padding: 30px;
+}
+
+.score {
+  font-size: 3rem;
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.percentage {
+  font-size: 2.5rem;
+  color: #ff1493;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.reward-message {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #4caf50;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+/* Quest Placeholder */
+.quest-placeholder {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.quest-placeholder h2 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.quest-placeholder p {
+  font-size: 1.3rem;
+  color: #666;
+}
+
+/* Topic Input */
+.topic-input-container {
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 50px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  margin: 100px auto;
+  max-width: 600px;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: #ff1493;
+  margin-bottom: 15px;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.topic-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.topic-input {
+  padding: 20px;
+  font-size: 1.2rem;
+  border: 3px solid #ff1493;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.topic-input:focus {
+  border-color: #ff69b4;
+  box-shadow: 0 0 20px rgba(255, 20, 147, 0.3);
+}
+
+.start-button {
+  padding: 20px;
+  font-size: 1.3rem;
+  background: rgba(149, 186, 245, 0.9);
+  color: white;
+  text-shadow: 2px 2px 0 #000;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: bold;
+}
+
+.start-button:hover {
+  background: rgba(255, 0, 163, 0.4);
+  transform: scale(1.05);
+}
+
+.loading {
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 50px;
+  font-size: 1.5rem;
+  color: #ff1493;
+  margin: 100px auto;
+  max-width: 600px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .timer-display {
+    font-size: 4rem;
+  }
+  
+  .control-button {
+    padding: 12px 30px;
+    font-size: 1rem;
+  }
+  
+  .center-container {
+    max-width: 100%;
+  }
+  
+  .main-card {
+    padding: 30px 20px;
+  }
+}
+
+.reset-button {
+  background: rgba(149, 186, 245, 0.9);
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-shadow: 2px 2px 0 #000;
+  padding: 10px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reset-button:hover {
+  background: rgba(255, 0, 163, 0.4);
+  transform: scale(1.1);
+}
+
+/* Quiz Panel - Larger with Quiz.png background */
+.main-card .quiz-card {
+  background-image: url('/img/Quiz.png');
+  background-size: 100% 100%;
+  background-position: center;
+  image-rendering: pixelated;
+  padding: 40px;
+  /* min-height: 550px; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.quiz-card .question-counter,
+.quiz-card .question-text {
+  color: white;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.quiz-card .results-display .score,
+.quiz-card .results-display .percentage {
+  color: white;
+  text-shadow: 3px 3px 0 #000;
+}
+
+/* Quest Panel - with quest.png background */
+.quest-placeholder {
+  background-image: url('/img/quest.png');
+  background-size: 100% 100%;
+  background-position: center;
+  image-rendering: pixelated;
+  padding: 0;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.quest-game-container {
+  position: absolute;
+  top: 8%;
+  left: 5%;
+  right: 4.6%;
+  bottom: 15%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  justify-content: flex-start; 
+}
+
+
+.quest-game-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: black;
+  overflow: hidden;
+}
+
+/* apply styles to the actual canvas */
+.unity-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  background: black;
+}
+
+
+/* .quest-game-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: black;
+  overflow: hidden;
+}
+
+#unity-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  background: black;
+} */
+
+.quest-controls {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.fullscreen-btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background: rgba(149, 186, 245, 0.9);
+  color: white;
+  text-shadow: 2px 2px 0 #000;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fullscreen-btn:hover {
+  background: rgba(255, 0, 163, 0.4);
+  transform: scale(1.05);
+}
+
+.quest-instructions {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: white;
+  text-shadow: 2px 2px 0 #000;
+  text-align: center;
+}
+
+.instruction-line {
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.arrow-keys {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.arrow {
+  display: inline-block;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
