@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 const UNITY_ROOT = ""; // put your Unity folder in: public/Quest/...
 
-export default function QuestGame() {
+export default function QuestGame({ fruitCount,resetFruits }) {
   const canvasRef = useRef(null);
   const unityInstanceRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -86,6 +86,15 @@ export default function QuestGame() {
       }
     };
   }, []);
+
+    useEffect(() => {
+    const instance = unityInstanceRef.current;
+    if (!isLoaded || !instance) return;
+    if(fruitCount>0){
+      instance.SendMessage("Bridge", "SetFruitCount", String(fruitCount));
+      resetFruits?.();
+    }
+  }, [fruitCount, isLoaded]);
 
   const handleFullscreen = () => {
     unityInstanceRef.current?.SetFullscreen(1);

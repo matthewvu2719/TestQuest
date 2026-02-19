@@ -12,6 +12,13 @@ function App() {
   const [activeTab, setActiveTab] = useState('training')
   const [topic, setTopic] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
+  const [showFruitAdded, setShowFruitAdded] = useState(false)
+
+  const resetFruitsWithPopup = () => {
+    setTotalFruits(0)
+    setShowFruitAdded(true)
+    setTimeout(() => setShowFruitAdded(false), 2000) // hide after 2s
+  }
 
   const generateQuestions = async (topicText) => {
     setIsGenerating(true)
@@ -116,14 +123,15 @@ function App() {
     } else if (activeTab === 'quest') {
       return (
         <div className="quest-placeholder">
-          <QuestGame />
+          <QuestGame fruitCount={totalFruits} resetFruits={resetFruitsWithPopup}/>
         </div>
       )
     }
   }
-
+  
   return (
     <div className="app">
+      {showFruitAdded && <FruitAddedToast />}
       <img src="/img/maincharacter1.png" className="decoration character1" alt="character" />
       <img src="/img/maincharacter2.png" className="decoration character2" alt="character" />
       <img src="/img/bunnyEnemy.png" className="decoration bunny" alt="bunny" />
@@ -178,5 +186,11 @@ function App() {
     </div>
   )
 }
-
+function FruitAddedToast() {
+  return (
+    <div className="fruit-toast">
+      ✅ Fruit added!
+    </div>
+  )
+}
 export default App

@@ -25,10 +25,27 @@ app.post('/api/generate-questions', async (req, res) => {
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
+      response_format: { type: "json_object" }, 
       messages: [
         {
           role: 'system',
-          content: 'You are a helpful quiz generator. Generate exactly 10 multiple choice questions with 4 options each. Return ONLY valid JSON in this exact format: [{"question": "...", "answers": ["A", "B", "C", "D"], "correctAnswer": 0}]'
+          content: `
+            You generate quiz questions.
+
+            Return a JSON object with this structure:
+
+            {
+              "questions": [
+                {
+                  "question": "string",
+                  "answers": ["A", "B", "C", "D"],
+                  "correctAnswer": 0
+                }
+              ]
+            }
+
+            Generate exactly 10 questions.
+            `
         },
         {
           role: 'user',
@@ -38,14 +55,10 @@ app.post('/api/generate-questions', async (req, res) => {
       temperature: 0.7,
     });
 
-    let content = completion.choices[0].message.content;
-    
-    // Remove markdown code blocks if present
-    content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    
-    const questions = JSON.parse(content);
 
-    res.json({ questions });
+    const parsed = JSON.parse(completion.choices[0].message.content);
+    res.json(parsed);
+
   } catch (error) {
     console.error('Error generating questions:', error);
     res.status(500).json({ error: 'Failed to generate questions' });
