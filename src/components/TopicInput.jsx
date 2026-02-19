@@ -12,8 +12,8 @@ function TopicInput({ onTopicSubmit }) {
 
   return (
     <div className="topic-input-container">
-      <h1 className="title">🎓 Study Time! 🎓</h1>
-      <p className="subtitle">What do you want to learn today?</p>
+      <h1 className="title"> Test time! </h1>
+      <p className="subtitle">What did you train for today?</p>
       <form onSubmit={handleSubmit} className="topic-form">
         <input
           type="text"
@@ -23,7 +23,7 @@ function TopicInput({ onTopicSubmit }) {
           className="topic-input"
         />
         <button type="submit" className="start-button">
-          Start Learning!
+          Start Test!
         </button>
       </form>
     </div>

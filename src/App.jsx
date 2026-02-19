@@ -1,50 +1,75 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import PomodoroTimer from './components/PomodoroTimer'
 import Quiz from './components/Quiz'
 import FruitCounter from './components/FruitCounter'
 import QuestGame from './components/QuestGame'
+import TopicInput from './components/TopicInput'
 
 function App() {
   const [questions, setQuestions] = useState([])
-  const [pomodoroCompleted, setPomodoroCompleted] = useState(false)
+  const [pomodoroCompleted, setPomodoroCompleted] = useState(true)
   const [totalFruits, setTotalFruits] = useState(0)
   const [activeTab, setActiveTab] = useState('training')
+  const [topic, setTopic] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
 
-  useEffect(() => {
-    generateQuestions()
-  }, [])
+  const generateQuestions = async (topicText) => {
+    setIsGenerating(true)
+    try {
+      const response = await fetch('http://localhost:3001/api/generate-questions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ topic: topicText })
+      });
 
-  const generateQuestions = async () => {
-    // Simulated AI generation - replace with actual AI API call
-    const mockQuestions = [
-      {
-        question: 'What is an important concept?',
-        answers: ['Option A', 'Option B', 'Option C', 'Option D'],
-        correctAnswer: 0
-      },
-      {
-        question: 'Which of these is correct?',
-        answers: ['Choice 1', 'Choice 2', 'Choice 3', 'Choice 4'],
-        correctAnswer: 1
-      },
-      {
-        question: 'How does this work?',
-        answers: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-        correctAnswer: 2
-      },
-      {
-        question: 'What is a key principle?',
-        answers: ['Principle 1', 'Principle 2', 'Principle 3', 'Principle 4'],
-        correctAnswer: 3
-      },
-      {
-        question: 'Why is this important?',
-        answers: ['Reason A', 'Reason B', 'Reason C', 'Reason D'],
-        correctAnswer: 0
+      if (!response.ok) {
+        throw new Error('Failed to generate questions');
       }
-    ]
-    
-    setQuestions(mockQuestions)
+
+      const data = await response.json();
+      setQuestions(data.questions);
+      setTopic(topicText);
+    } catch (error) {
+      console.error('Error:', error);
+      // Fallback to mock questions if API fails
+      const mockQuestions = [
+        {
+          question: 'What is an important concept?',
+          answers: ['Option A', 'Option B', 'Option C', 'Option D'],
+          correctAnswer: 0
+        },
+        {
+          question: 'Which of these is correct?',
+          answers: ['Choice 1', 'Choice 2', 'Choice 3', 'Choice 4'],
+          correctAnswer: 1
+        },
+        {
+          question: 'How does this work?',
+          answers: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
+          correctAnswer: 2
+        },
+        {
+          question: 'What is a key principle?',
+          answers: ['Principle 1', 'Principle 2', 'Principle 3', 'Principle 4'],
+          correctAnswer: 3
+        },
+        {
+          question: 'Why is this important?',
+          answers: ['Reason A', 'Reason B', 'Reason C', 'Reason D'],
+          correctAnswer: 0
+        }
+      ];
+      setQuestions(mockQuestions);
+      setTopic(topicText);
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
+  const handleTopicSubmit = (topicText) => {
+    generateQuestions(topicText)
   }
 
   const handlePomodoroComplete = () => {
@@ -65,11 +90,27 @@ function App() {
     if (activeTab === 'training') {
       return <PomodoroTimer onComplete={handlePomodoroComplete} isLocked={false} />
     } else if (activeTab === 'test') {
+      if (isGenerating) {
+        return (
+          <div className="quiz-card">
+            <div className="loading">Generating quiz questions...</div>
+          </div>
+        )
+      }
+      
+      if (!topic || questions.length === 0) {
+        return <TopicInput onTopicSubmit={handleTopicSubmit} />
+      }
+      
       return (
         <Quiz 
           questions={questions} 
           onComplete={handleQuizComplete}
           isLocked={!pomodoroCompleted}
+          onNewTest={() => {
+            setTopic('')
+            setQuestions([])
+          }}
         />
       )
     } else if (activeTab === 'quest') {
@@ -90,16 +131,16 @@ function App() {
       <img src="/img/MushroomEnemy.png" className="decoration mushroom" alt="mushroom" />
       <img src="/img/trunkEnemy.png" className="decoration trunk" alt="trunk" />
       <img src="/img/TerrainBox1.png" className="decoration box1" alt="box" />
-      <img src="/img/TerrainBox2.png" className="decoration box2" alt="box" />
+      <img src="/img/TerrainBox3.png" className="decoration box2" alt="box" />
       <img src="/img/TerrainBox3.png" className="decoration box3" alt="box" />
       <img src="/img/TerrainBox4.png" className="decoration box4" alt="box" />
       <img src="/img/TerrainBox1.png" className="decoration box5" alt="box" />
       <img src="/img/TerrainBox2.png" className="decoration box6" alt="box" />
-      <img src="/img/TerrainBox3.png" className="decoration box7" alt="box" />
+      <img src="/img/TerrainBox1.png" className="decoration box7" alt="box" />
       <img src="/img/TerrainBox4.png" className="decoration box8" alt="box" />
-      <img src="/img/TerrainBox1.png" className="decoration box9" alt="box" />
+      <img src="/img/TerrainBox3.png" className="decoration box9" alt="box" />
       <img src="/img/TerrainBox2.png" className="decoration box10" alt="box" />
-      <img src="/img/TerrainBox3.png" className="decoration box11" alt="box" />
+      <img src="/img/TerrainBox1.png" className="decoration box11" alt="box" />
       <img src="/img/TerrainBox4.png" className="decoration box12" alt="box" />
       
       <header className="app-header">

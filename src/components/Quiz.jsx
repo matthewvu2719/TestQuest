@@ -1,11 +1,14 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-function Quiz({ questions, onComplete, isLocked }) {
+function Quiz({ questions, onComplete, isLocked, onNewTest }) {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedAnswers, setSelectedAnswers] = useState({})
   const [showResults, setShowResults] = useState(false)
+  const [reviewMode, setReviewMode] = useState(false)
 
   const handleAnswerSelect = (questionIndex, answerIndex) => {
+    if (reviewMode) return // Don't allow selection in review mode
+    
     setSelectedAnswers({
       ...selectedAnswers,
       [questionIndex]: answerIndex
@@ -13,7 +16,12 @@ function Quiz({ questions, onComplete, isLocked }) {
   }
 
   const handleNext = () => {
-    if (currentQuestion < questions.length - 1) {
+    if (reviewMode && currentQuestion === questions.length - 1) {
+      // In review mode, after last question go back to results
+      setReviewMode(false)
+      setShowResults(true)
+      setCurrentQuestion(0)
+    } else if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1)
     }
   }
@@ -31,6 +39,20 @@ function Quiz({ questions, onComplete, isLocked }) {
     const percentage = (correctAnswers / questions.length) * 100
     setShowResults(true)
     onComplete(percentage)
+  }
+
+  const handleViewAnswers = () => {
+    setShowResults(false)
+    setReviewMode(true)
+    setCurrentQuestion(0)
+  }
+
+  const handleNewTest = () => {
+    setShowResults(false)
+    setReviewMode(false)
+    setCurrentQuestion(0)
+    setSelectedAnswers({})
+    onNewTest()
   }
 
   const calculateReward = () => {
@@ -56,6 +78,17 @@ function Quiz({ questions, onComplete, isLocked }) {
     )
   }
 
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="quiz-card">
+        <h2 className="card-title">📝 Quiz Time</h2>
+        <div className="locked-message">
+          Loading questions...
+        </div>
+      </div>
+    )
+  }
+
   if (showResults) {
     const correctAnswers = questions.filter(
       (q, index) => selectedAnswers[index] === q.correctAnswer
@@ -65,7 +98,7 @@ function Quiz({ questions, onComplete, isLocked }) {
 
     return (
       <div className="quiz-card">
-        <h2 className="card-title">🎉 Quiz Results</h2>
+        <h2 className="card-title">Test Results</h2>
         <div className="results-display">
           <div className="score">
             {correctAnswers} / {questions.length}
@@ -76,30 +109,58 @@ function Quiz({ questions, onComplete, isLocked }) {
               🎉 +{reward} 🍎 Earned!
             </div>
           )}
+          <div className="quiz-controls">
+            <button onClick={handleViewAnswers} className="control-button">
+              View Answers
+            </button>
+            <button onClick={handleNewTest} className="control-button">
+              New Test
+            </button>
+          </div>
         </div>
       </div>
     )
   }
 
   const question = questions[currentQuestion]
+  const userAnswer = selectedAnswers[currentQuestion]
+  const correctAnswer = question.correctAnswer
 
   return (
     <div className="quiz-card">
+      <button className="quiz-close-button" onClick={handleNewTest} title="Cancel Quiz">
+        ✕
+      </button>
       <h2 className="card-title">📝 Quiz Time</h2>
       <div className="question-counter">
         Question {currentQuestion + 1} of {questions.length}
       </div>
       <div className="question-text">{question.question}</div>
       <div className="answers-list">
-        {question.answers.map((answer, index) => (
-          <button
-            key={index}
-            className={`answer-button ${selectedAnswers[currentQuestion] === index ? 'selected' : ''}`}
-            onClick={() => handleAnswerSelect(currentQuestion, index)}
-          >
-            {answer}
-          </button>
-        ))}
+        {question.answers.map((answer, index) => {
+          const isSelected = userAnswer === index
+          const isCorrect = index === correctAnswer
+          const isWrong = reviewMode && isSelected && !isCorrect
+          
+          let buttonClass = 'answer-button'
+          if (isSelected) buttonClass += ' selected'
+          if (reviewMode && isCorrect) buttonClass += ' correct'
+          if (isWrong) buttonClass += ' wrong'
+          
+          return (
+            <button
+              key={index}
+              className={buttonClass}
+              onClick={() => handleAnswerSelect(currentQuestion, index)}
+              disabled={reviewMode}
+            >
+              {answer}
+              {reviewMode && isSelected && isCorrect && ' ✓'}
+              {reviewMode && isWrong && ' ✗'}
+              {reviewMode && isCorrect && !isSelected && ' ✓'}
+            </button>
+          )
+        })}
       </div>
       <div className="quiz-controls">
         <button
@@ -109,7 +170,11 @@ function Quiz({ questions, onComplete, isLocked }) {
         >
           Previous
         </button>
-        {currentQuestion === questions.length - 1 ? (
+        {reviewMode ? (
+          <button onClick={handleNext} className="control-button">
+            {currentQuestion === questions.length - 1 ? 'Back to Results' : 'Next'}
+          </button>
+        ) : currentQuestion === questions.length - 1 ? (
           <button
             onClick={handleSubmit}
             disabled={Object.keys(selectedAnswers).length !== questions.length}

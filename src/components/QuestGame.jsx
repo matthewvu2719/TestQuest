@@ -93,19 +93,22 @@ export default function QuestGame() {
 
   return (
     <div className="quest-game-container">
+      <button
+        onClick={handleFullscreen}
+        className="fullscreen-icon-btn"
+        disabled={!isLoaded}
+        title={!isLoaded ? "Loading..." : "Fullscreen"}
+      >
+        ⛶
+      </button>
       <div className="quest-game-frame">
         <canvas ref={canvasRef} className="unity-canvas"/>
       </div>
-
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
       <div className="quest-controls">
-        <button
-          onClick={handleFullscreen}
-          className="fullscreen-btn"
-          disabled={!isLoaded}
-          title={!isLoaded ? "Loading..." : "Fullscreen"}
-        >
-          Fullscreen
-        </button>
         <div className="quest-instructions">
           <div className="instruction-line">
             <span>Move: </span>
@@ -117,7 +120,7 @@ export default function QuestGame() {
             </span>
           </div>
           <div className="instruction-line">Pause: P</div>
-          <div className="instruction-line">ESC: Exit full screen</div>
+          <div className="instruction-line">Exit fullscreen: ESC</div>
         </div>
       </div>
     </div>
