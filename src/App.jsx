@@ -4,8 +4,10 @@ import Quiz from './components/Quiz'
 import FruitCounter from './components/FruitCounter'
 import QuestGame from './components/QuestGame'
 import TopicInput from './components/TopicInput'
+import LandingPage from './components/LandingPage'
 
 function App() {
+  const [showLanding, setShowLanding] = useState(true)
   const [questions, setQuestions] = useState([])
   const [pomodoroCompleted, setPomodoroCompleted] = useState(true)
   const [totalFruits, setTotalFruits] = useState(0)
@@ -149,6 +151,14 @@ function App() {
         </div>
       )
     }
+  }
+  
+  if (showLanding) {
+    return (
+      <div className="app">
+        <LandingPage onEnterApp={() => setShowLanding(false)} />
+      </div>
+    )
   }
   
   return (

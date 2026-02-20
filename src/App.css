@@ -862,3 +862,275 @@ html {
   font-size: 1.375rem;
   font-weight: bold;
 }
+
+/* Landing Page */
+.landing-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+  background-image: url('/img/Blue.png');
+  background-repeat: repeat;
+  background-size: 500px 500px;
+  image-rendering: pixelated;
+}
+
+.landing-decoration {
+  position: absolute;
+  width: 120px;
+  height: auto;
+  image-rendering: pixelated;
+  animation: float 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.pig-decoration {
+  top: 50%;
+  right: 20%;
+  animation-delay: 0.5s;
+}
+
+.pig-speech-bubble {
+  position: absolute;
+  top: 48%;
+  right: 15%;
+  background: white;
+  padding: 8px 12px;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: float 4s ease-in-out infinite;
+  animation-delay: 0.5s;
+  z-index: 20;
+  border: 2px solid #333;
+  border-radius: 0;
+  image-rendering: pixelated;
+}
+
+.pig-speech-bubble::after {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 10px solid #333;
+}
+
+.pig-speech-bubble::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 10px solid white;
+  z-index: 1;
+}
+
+.bunny-decoration {
+  top: 50%;
+  right: 30%;
+  width: 180px;
+  animation-delay: 1s;
+}
+
+.radish-decoration {
+  top: 20%;
+  right: 25%;
+  animation-delay: 1.5s;
+}
+
+.landing-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 4rem;
+  color: white;
+  text-shadow: 4px 4px 0 #000;
+  margin-bottom: 20px;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  color: white;
+  text-shadow: 2px 2px 0 #000;
+  margin-bottom: 40px;
+}
+
+.enter-app-button {
+  padding: 20px 50px;
+  font-size: 1.5rem;
+  background: rgba(149, 186, 245, 0.9);
+  color: white;
+  text-shadow: 2px 2px 0 #000;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: normal;
+}
+
+.enter-app-button:hover {
+  background: rgba(255, 0, 163, 0.4);
+  transform: scale(1.1);
+}
+
+.blueguy-guide {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 50px;
+  padding: 30px;
+  margin: -50px 0 30px 400px;
+  max-width: 800px;
+  animation: float 4s ease-in-out infinite;
+}
+
+.blueguy-character {
+  width: 120px;
+  height: auto;
+  image-rendering: pixelated;
+}
+
+.speech-bubble {
+  position: relative;
+  background: white;
+  padding: 20px 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  transform: translateY(-20px);
+  border: 3px solid #333;
+  border-radius: 0;
+  image-rendering: pixelated;
+}
+
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  left: -23px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-right: 20px solid #333;
+}
+
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-right: 20px solid white;
+}
+
+.speech-bubble p {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.speech-bubble ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.speech-bubble li {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 5px 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.landing-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  padding: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 30px;
+  text-align: center;
+  transition: transform 0.3s;
+  background-size: 100% 100%;
+  background-position: center;
+  image-rendering: pixelated;
+}
+
+.feature-train {
+  background-image: url('/img/TerrainBox6.png');
+}
+
+.feature-test {
+  background-image: url('/img/TerrainBox2.png');
+}
+
+.feature-quest {
+  background-image: url('/img/TerrainBox4.png');
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: white;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.feature-card p {
+  font-size: 1rem;
+  color: white;
+  text-shadow: 1px 1px 0 #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .landing-features {
+    grid-template-columns: 1fr;
+    padding: 30px 20px;
+  }
+}
