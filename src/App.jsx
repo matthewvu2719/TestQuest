@@ -29,7 +29,7 @@ function App() {
   const generateQuestions = async (topicText) => {
     setIsGenerating(true)
     try {
-      const response = await fetch('http://localhost:3001/api/generate-questions', {
+      const response = await fetch('/api/generate-questions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
