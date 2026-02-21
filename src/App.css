@@ -1113,6 +1113,7 @@ html {
 .feature-icon {
   font-size: 3rem;
   margin-bottom: 15px;
+  text-shadow: 3px 3px 0 #000;
 }
 
 .feature-card h3 {
