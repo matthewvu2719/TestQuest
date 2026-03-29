@@ -1249,10 +1249,6 @@ html {
   transition: all 0.2s;
 }
 
-.tech-badge:hover {
-  background: rgba(149, 186, 245, 0.2);
-  border-color: #95baf5;
-}
 
 /* Clerk user panel hover overrides */
 .cl-userButtonPopoverActionButton:hover .cl-userButtonPopoverActionButtonText,

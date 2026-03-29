@@ -50,22 +50,22 @@ function LandingPage({ onEnterApp }) {
 
         <div className="landing-features">
           <div className="feature-card feature-train">
-            <div className="feature-icon">⏰</div>
+            <div className="feature-icon">📖</div>
             <h3>Train</h3>
-            <p>Focus with Pomodoro timer and earn rewards</p>
+            <p>Train with Pomodoro timer and AI-generated notes, flashcards and diagrams</p>
           </div>
 
           <div className="feature-card feature-test">
             <div className="feature-icon">📝</div>
             <h3>Test</h3>
-            <p>Challenge yourself with AI-generated quizzes</p>
+            <p>Challenge yourself with AI-generated MCQ, short and long answer exams</p>
           </div>
 
           <div className="feature-card feature-quest">
             <img src="/img/bunnyEnemy.png" alt="Bunny" className="quest-bunny" />
             <div className="feature-icon">🎮</div>
             <h3>Quest!</h3>
-            <p>Play and explore in your adventure</p>
+            <p>Spend your earned fruits to battle enemies in an RPG adventure</p>
           </div>
         </div>
 
@@ -84,8 +84,8 @@ function LandingPage({ onEnterApp }) {
             </div>
             <div className="step-card">
               <div className="step-number">03</div>
-              <h4>Train & Earn Apples</h4>
-              <p>Use the Pomodoro timer to focus. Complete study sessions to earn apple rewards.</p>
+              <h4>Train & Earn fruits</h4>
+              <p>Use the Pomodoro timer to focus. Complete study sessions to earn fruits rewards.</p>
             </div>
             <div className="step-card">
               <div className="step-number">04</div>
@@ -94,8 +94,8 @@ function LandingPage({ onEnterApp }) {
             </div>
             <div className="step-card">
               <div className="step-number">05</div>
-              <h4>Spend Apples on Quest</h4>
-              <p>Use earned apples to play the adventure game. Defeat enemies and explore the world!</p>
+              <h4>Spend fruits on Quest</h4>
+              <p>Use earned fruits to play the adventure game. Defeat enemies and explore the world!</p>
             </div>
             <div className="step-card">
               <div className="step-number">06</div>
