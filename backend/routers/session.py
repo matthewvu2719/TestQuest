@@ -1,15 +1,18 @@
 import json
+from typing import Optional
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from graphs.session_graph import session_graph, insights_graph
+from pinecone_store import store_session
 
 router = APIRouter(prefix="/api/session")
 
 
 class StartRequest(BaseModel):
     topic: str
+    user_id: Optional[str] = None
 
 
 class SubmitRequest(BaseModel):
@@ -48,7 +51,8 @@ async def start_session(req: StartRequest):
     Streams node completion events via SSE as each agent finishes.
     """
     async def event_stream():
-        state = {"topic": req.topic}
+        state = {"topic": req.topic, "user_id": req.user_id}
+        notes_result = {}
 
         async for event in session_graph.astream_events(state, version="v2"):
             kind = event.get("event")
@@ -57,12 +61,18 @@ async def start_session(req: StartRequest):
             # Emit when a node finishes
             if kind == "on_chain_end" and name in ("fetch", "notes", "quiz", "flashcards", "visuals"):
                 output = event.get("data", {}).get("output", {})
+                if name == "notes":
+                    notes_result["notes"] = output.get("notes", "")
                 payload = json.dumps({
                     "node": name,
                     "status": "done",
                     "data": output,
                 })
                 yield f"data: {payload}\n\n"
+
+        # Store session in Pinecone for future RAG
+        if req.user_id and notes_result.get("notes"):
+            store_session(req.topic, notes_result["notes"], req.user_id)
 
         # Signal stream complete
         yield f"data: {json.dumps({'node': 'complete', 'status': 'done'})}\n\n"

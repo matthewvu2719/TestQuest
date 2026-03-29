@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { UserButton, useAuth } from '@clerk/clerk-react'
+import { API_BASE } from './config'
 import { usePomodoro } from './hooks/usePomodoro'
 import PomodoroTimer from './components/PomodoroTimer'
 import TrainTab from './components/TrainTab'
@@ -9,6 +11,7 @@ import LandingPage from './components/LandingPage'
 import SessionStart from './components/SessionStart'
 
 function App() {
+  const { userId } = useAuth()
   const [phase, setPhase] = useState('landing') // 'landing' | 'start' | 'loading' | 'session'
   const [topic, setTopic] = useState('')
   const [nodeStatus, setNodeStatus] = useState({})
@@ -34,10 +37,10 @@ function App() {
     setSession({ notes: '', diagrams: [], flashcards: [], mcq: [], short_questions: [], long_questions: [], sources: [], source_urls: [] })
 
     try {
-      const res = await fetch('/api/session/start', {
+      const res = await fetch(`${API_BASE}/api/session/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic: topicText }),
+        body: JSON.stringify({ topic: topicText, user_id: userId }),
       })
 
       const reader = res.body.getReader()
@@ -86,6 +89,7 @@ function App() {
         <Decorations />
         <header className="app-header">
           <FruitCounter totalFruits={totalFruits} />
+          <div className="header-user"><UserButton /></div>
         </header>
         <main className="app-main">
           <div className="center-container">
@@ -109,6 +113,7 @@ function App() {
       <Decorations />
       <header className="app-header">
         <FruitCounter totalFruits={totalFruits} />
+        <div className="header-user"><UserButton /></div>
       </header>
       <main className="app-main">
         <div className={`center-container ${activeTab === 'train' || activeTab === 'test' ? 'wide' : ''}`}>

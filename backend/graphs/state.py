@@ -4,6 +4,8 @@ from typing import TypedDict, Optional
 class SessionState(TypedDict):
     # Input
     topic: str
+    user_id: Optional[str]           # from Clerk, used for Pinecone scoping
+    past_context: Optional[str]      # injected from Pinecone RAG
 
     # fetch_node output (shared by all nodes)
     sources: Optional[list[dict]]        # [{ url, content }]

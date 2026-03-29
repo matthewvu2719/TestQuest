@@ -7,3 +7,6 @@ tavily-python==0.7.23
 python-dotenv==1.2.2
 sse-starlette==3.3.3
 pydantic==2.12.5
+pinecone==8.1.0
+google-genai==1.69.0
+json-repair==0.58.7

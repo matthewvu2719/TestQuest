@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { API_BASE } from '../config'
 
 function TestTab({ session, topic, nodeStatus, onFruitsEarned, onNewSession }) {
   const [subTab, setSubTab] = useState('mcq')
@@ -143,7 +144,7 @@ function TestTab({ session, topic, nodeStatus, onFruitsEarned, onNewSession }) {
       const shortArr = session.short_questions.map((_, i) => shortAnswers[i] ?? '')
       const longArr = session.long_questions.map((_, i) => longAnswers[i] ?? '')
 
-      const res = await fetch('/api/session/submit', {
+      const res = await fetch(`${API_BASE}/api/session/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

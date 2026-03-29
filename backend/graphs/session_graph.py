@@ -8,6 +8,7 @@ from langgraph.graph import StateGraph, END
 
 from .state import SessionState
 from llm import invoke_with_retry
+from pinecone_store import query_similar
 
 tavily = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
@@ -48,7 +49,7 @@ def _parse_json(text: str) -> dict:
 # ---------------------------------------------------------------------------
 
 async def fetch_node(state: SessionState) -> dict:
-    """EXTRACT — fetch real web content for the topic via Tavily."""
+    """EXTRACT — fetch web content via Tavily + past context from Pinecone."""
     results = tavily.search(
         query=f"{state['topic']} explained concepts tutorial overview",
         search_depth="advanced",
@@ -63,9 +64,19 @@ async def fetch_node(state: SessionState) -> dict:
         for r in results.get("results", [])
         if len(r.get("raw_content") or r.get("content", "")) > 300
     ]
+
+    # Retrieve past similar sessions from Pinecone
+    user_id = state.get("user_id") or ""
+    past_sessions = query_similar(state["topic"], user_id, top_k=3)
+    past_context = ""
+    if past_sessions:
+        parts = [f"**{s['topic']}**:\n{s['notes_snippet']}" for s in past_sessions]
+        past_context = "\n\n---\n\n".join(parts)
+
     return {
         "sources": sources,
         "source_urls": [s["url"] for s in sources],
+        "past_context": past_context,
     }
 
 
@@ -73,11 +84,18 @@ async def notes_node(state: SessionState) -> dict:
     """TRANSFORM — generate lecture notes grounded in fetched sources."""
     context = _sources_to_text(state["sources"])
 
-    prompt = f"""You are an expert educator. Using ONLY the source content below, write comprehensive lecture notes on: "{state['topic']}".
+    past_context = state.get("past_context", "")
+    past_section = f"""
+PAST STUDY NOTES (from the user's previous sessions — use for additional context only):
+{past_context}
+
+""" if past_context else ""
+
+    prompt = f"""You are an expert educator. Using the source content below, write comprehensive lecture notes on: "{state['topic']}".
 
 SOURCE CONTENT:
 {context}
-
+{past_section}
 Rules:
 - Output raw markdown only — no JSON, no code fences
 - Use markdown headers (##), bullet points, bold for key terms
@@ -85,7 +103,7 @@ Rules:
 - Cover all major subtopics from the sources
 - Where a diagram would genuinely help, insert a marker on its own line: [DIAGRAM:diagram_1]
 - Use at most 2 [DIAGRAM:x] markers
-- Base notes ONLY on the provided sources"""
+- Base notes primarily on the provided sources"""
 
     response = invoke_with_retry([HumanMessage(content=prompt)])
     notes = response.content.strip()

@@ -175,7 +175,14 @@ html {
   z-index: 100;
   padding: 20px;
   display: flex;
+  align-items: center;
+  gap: 12px;
   justify-content: flex-end;
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
 }
 
 .fruit-counter {
@@ -986,6 +993,29 @@ html {
   margin-bottom: 40px;
 }
 
+.landing-auth {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+}
+
+.landing-auth-buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.landing-welcome {
+  font-size: 1.2rem;
+  color: white;
+  text-shadow: 2px 2px 0 #000;
+  margin-bottom: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
 .enter-app-button {
   padding: 20px 50px;
   font-size: 1.5rem;
@@ -1001,6 +1031,12 @@ html {
 .enter-app-button:hover {
   background: rgba(255, 0, 163, 0.4);
   transform: scale(1.1);
+}
+
+.enter-app-button.secondary {
+  background: rgba(255, 255, 255, 0.25);
+  font-size: 1.2rem;
+  padding: 16px 40px;
 }
 
 .blueguy-character {
