@@ -30,7 +30,7 @@ def _embed(text: str) -> list[float]:
         try:
             client = genai.Client(api_key=key)
             result = client.models.embed_content(
-                model="models/text-embedding-004",
+                model="text-embedding-004",
                 contents=text[:8000],
             )
             return result.embeddings[0].values
