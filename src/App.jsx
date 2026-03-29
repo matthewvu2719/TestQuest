@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { UserButton, useAuth } from '@clerk/clerk-react'
 import { API_BASE } from './config'
 import { usePomodoro } from './hooks/usePomodoro'
@@ -11,8 +11,15 @@ import LandingPage from './components/LandingPage'
 import SessionStart from './components/SessionStart'
 
 function App() {
-  const { userId } = useAuth()
-  const [phase, setPhase] = useState('landing') // 'landing' | 'start' | 'loading' | 'session'
+  const { userId, isLoaded } = useAuth()
+  const [phase, setPhase] = useState(null)
+
+  useEffect(() => {
+    if (isLoaded && phase === null) {
+      setPhase(userId ? 'start' : 'landing')
+    }
+  }, [isLoaded, userId])
+
   const [topic, setTopic] = useState('')
   const [nodeStatus, setNodeStatus] = useState({})
   const [session, setSession] = useState({
@@ -29,6 +36,8 @@ function App() {
     setShowFruitAdded(true)
     setTimeout(() => setShowFruitAdded(false), 2000)
   })
+
+  if (!isLoaded || phase === null) return null
 
   const startSession = async (topicText) => {
     setTopic(topicText)

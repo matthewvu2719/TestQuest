@@ -1,4 +1,4 @@
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton, useUser } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/clerk-react'
 
 function LandingPage({ onEnterApp }) {
   const { user } = useUser()
@@ -27,14 +27,9 @@ function LandingPage({ onEnterApp }) {
         </SignedIn>
 
         <SignedOut>
-          <div className="landing-auth-buttons">
-            <SignInButton mode="modal">
-              <button className="enter-app-button">Sign In</button>
-            </SignInButton>
-            <SignUpButton mode="modal">
-              <button className="enter-app-button secondary">Create Account</button>
-            </SignUpButton>
-          </div>
+          <SignInButton mode="modal">
+            <button className="enter-app-button">Start Now</button>
+          </SignInButton>
         </SignedOut>
       </div>
 
@@ -71,6 +66,58 @@ function LandingPage({ onEnterApp }) {
             <div className="feature-icon">🎮</div>
             <h3>Quest!</h3>
             <p>Play and explore in your adventure</p>
+          </div>
+        </div>
+
+        <div className="landing-how-it-works">
+          <h2 className="section-title">How It Works</h2>
+          <div className="steps-grid">
+            <div className="step-card">
+              <div className="step-number">01</div>
+              <h4>Enter a Topic</h4>
+              <p>Type any subject: history, science, math, coding, etc. Our AI fetches real web sources instantly.</p>
+            </div>
+            <div className="step-card">
+              <div className="step-number">02</div>
+              <h4>AI Builds Your Session</h4>
+              <p>Lecture notes, flashcards, diagrams, and a full exam are generated automatically using Gemini AI and Tavily RAG.</p>
+            </div>
+            <div className="step-card">
+              <div className="step-number">03</div>
+              <h4>Train & Earn Apples</h4>
+              <p>Use the Pomodoro timer to focus. Complete study sessions to earn apple rewards.</p>
+            </div>
+            <div className="step-card">
+              <div className="step-number">04</div>
+              <h4>Take the Exam</h4>
+              <p>10 MCQ, 10 short answer, 2 long answer questions. Get personalized AI feedback on your weak spots.</p>
+            </div>
+            <div className="step-card">
+              <div className="step-number">05</div>
+              <h4>Spend Apples on Quest</h4>
+              <p>Use earned apples to play the adventure game. Defeat enemies and explore the world!</p>
+            </div>
+            <div className="step-card">
+              <div className="step-number">06</div>
+              <h4>Gets Smarter Over Time</h4>
+              <p>Pinecone vector memory remembers your past sessions and enriches future study material on related topics.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="landing-tech">
+          <h2 className="section-title">Built With</h2>
+          <div className="tech-grid">
+            <span className="tech-badge">React + Vite</span>
+            <span className="tech-badge">Python + FastAPI</span>
+            <span className="tech-badge">LangGraph</span>
+            <span className="tech-badge">Gemini AI</span>
+            <span className="tech-badge">Tavily RAG</span>
+            <span className="tech-badge">Pinecone</span>
+            <span className="tech-badge">Clerk Auth</span>
+            <span className="tech-badge">Docker</span>
+            <span className="tech-badge">Google Cloud Run</span>
+            <span className="tech-badge">C# + Unity + WebGL</span>
           </div>
         </div>
       </div>
