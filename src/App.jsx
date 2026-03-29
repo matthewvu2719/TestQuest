@@ -1,228 +1,197 @@
 import { useState } from 'react'
+import { usePomodoro } from './hooks/usePomodoro'
 import PomodoroTimer from './components/PomodoroTimer'
-import Quiz from './components/Quiz'
-import FruitCounter from './components/FruitCounter'
+import TrainTab from './components/TrainTab'
+import TestTab from './components/TestTab'
 import QuestGame from './components/QuestGame'
-import TopicInput from './components/TopicInput'
+import FruitCounter from './components/FruitCounter'
 import LandingPage from './components/LandingPage'
+import SessionStart from './components/SessionStart'
 
 function App() {
-  const [showLanding, setShowLanding] = useState(true)
-  const [questions, setQuestions] = useState([])
-  const [pomodoroCompleted, setPomodoroCompleted] = useState(true)
-  const [totalFruits, setTotalFruits] = useState(0)
-  const [activeTab, setActiveTab] = useState('training')
+  const [phase, setPhase] = useState('landing') // 'landing' | 'start' | 'loading' | 'session'
   const [topic, setTopic] = useState('')
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [quizState, setQuizState] = useState({
-    currentQuestion: 0,
-    selectedAnswers: {},
-    showResults: false,
-    reviewMode: false
+  const [nodeStatus, setNodeStatus] = useState({})
+  const [session, setSession] = useState({
+    notes: '', diagrams: [], flashcards: [],
+    mcq: [], short_questions: [], long_questions: [],
+    sources: [], source_urls: [],
   })
+  const [activeTab, setActiveTab] = useState('pomodoro')
+  const [totalFruits, setTotalFruits] = useState(0)
   const [showFruitAdded, setShowFruitAdded] = useState(false)
 
-  const resetFruitsWithPopup = () => {
-    setTotalFruits(0)
+  const pomo = usePomodoro(() => {
+    setTotalFruits(f => f + 10)
     setShowFruitAdded(true)
-    setTimeout(() => setShowFruitAdded(false), 2000) // hide after 2s
-  }
+    setTimeout(() => setShowFruitAdded(false), 2000)
+  })
 
-  const generateQuestions = async (topicText) => {
-    setIsGenerating(true)
+  const startSession = async (topicText) => {
+    setTopic(topicText)
+    setPhase('loading')
+    setNodeStatus({})
+    setSession({ notes: '', diagrams: [], flashcards: [], mcq: [], short_questions: [], long_questions: [], sources: [], source_urls: [] })
+
     try {
-      const response = await fetch('/api/generate-questions', {
+      const res = await fetch('/api/session/start', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ topic: topicText })
-      });
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: topicText }),
+      })
 
-      if (!response.ok) {
-        throw new Error('Failed to generate questions');
-      }
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
 
-      const data = await response.json();
-      setQuestions(data.questions);
-      setTopic(topicText);
-    } catch (error) {
-      console.error('Error:', error);
-      // Fallback to mock questions if API fails
-      const mockQuestions = [
-        {
-          question: 'What is an important concept?',
-          answers: ['Option A', 'Option B', 'Option C', 'Option D'],
-          correctAnswer: 0
-        },
-        {
-          question: 'Which of these is correct?',
-          answers: ['Choice 1', 'Choice 2', 'Choice 3', 'Choice 4'],
-          correctAnswer: 1
-        },
-        {
-          question: 'How does this work?',
-          answers: ['Answer A', 'Answer B', 'Answer C', 'Answer D'],
-          correctAnswer: 2
-        },
-        {
-          question: 'What is a key principle?',
-          answers: ['Principle 1', 'Principle 2', 'Principle 3', 'Principle 4'],
-          correctAnswer: 3
-        },
-        {
-          question: 'Why is this important?',
-          answers: ['Reason A', 'Reason B', 'Reason C', 'Reason D'],
-          correctAnswer: 0
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop()
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue
+          try {
+            const payload = JSON.parse(line.slice(6))
+            if (payload.node === 'complete') {
+              setPhase('session')
+              setActiveTab('train')
+            } else {
+              setNodeStatus(prev => ({ ...prev, [payload.node]: 'done' }))
+              if (payload.data) setSession(prev => ({ ...prev, ...payload.data }))
+            }
+          } catch { /* skip malformed lines */ }
         }
-      ];
-      setQuestions(mockQuestions);
-      setTopic(topicText);
-    } finally {
-      setIsGenerating(false)
+      }
+    } catch (err) {
+      console.error('Session start failed:', err)
+      setPhase('start')
     }
   }
 
-  const handleTopicSubmit = (topicText) => {
-    generateQuestions(topicText)
-    // Reset quiz state when starting new test
-    setQuizState({
-      currentQuestion: 0,
-      selectedAnswers: {},
-      showResults: false,
-      reviewMode: false
-    })
-  }
-
-  const handlePomodoroComplete = () => {
-    setPomodoroCompleted(true)
-    setTotalFruits(prev => prev + 10)
-  }
-
-  const handleQuizComplete = (percentage) => {
-    let reward = 0
-    if (percentage >= 90) reward = 20
-    else if (percentage >= 80) reward = 10
-    else if (percentage >= 70) reward = 5
-    
-    setTotalFruits(prev => prev + reward)
-  }
-
-  const renderContent = () => {
-    if (activeTab === 'training') {
-      return <PomodoroTimer onComplete={handlePomodoroComplete} isLocked={false} />
-    } else if (activeTab === 'test') {
-      if (isGenerating) {
-        return (
-          <div className="quiz-card">
-            <div className="loading">Loading test...
-              Please wait...</div>
-          </div>
-        )
-      }
-      
-      if (!topic || questions.length === 0) {
-        return <TopicInput onTopicSubmit={handleTopicSubmit} />
-      }
-      
-      return (
-        <Quiz 
-          questions={questions} 
-          onComplete={handleQuizComplete}
-          isLocked={!pomodoroCompleted}
-          onNewTest={() => {
-            setTopic('')
-            setQuestions([])
-            setQuizState({
-              currentQuestion: 0,
-              selectedAnswers: {},
-              showResults: false,
-              reviewMode: false
-            })
-          }}
-          quizState={quizState}
-          setQuizState={setQuizState}
-        />
-      )
-    } else if (activeTab === 'quest') {
-      return (
-        <div className="quest-placeholder">
-          <QuestGame fruitCount={totalFruits} resetFruits={resetFruitsWithPopup}/>
-        </div>
-      )
-    }
-  }
-  
-  if (showLanding) {
+  if (phase === 'landing') {
     return (
       <div className="app">
-        <LandingPage onEnterApp={() => setShowLanding(false)} />
+        <LandingPage onEnterApp={() => setPhase('start')} />
       </div>
     )
   }
-  
+
+  if (phase === 'start' || phase === 'loading') {
+    return (
+      <div className="app">
+        <Decorations />
+        <header className="app-header">
+          <FruitCounter totalFruits={totalFruits} />
+        </header>
+        <main className="app-main">
+          <div className="center-container">
+            <div className="main-card">
+              <SessionStart
+                onStart={startSession}
+                isLoading={phase === 'loading'}
+                nodeStatus={nodeStatus}
+              />
+            </div>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
+  // phase === 'session'
   return (
     <div className="app">
-      {showFruitAdded && <FruitAddedToast />}
-      <img src="/img/maincharacter1.png" className="decoration character1" alt="character" />
-      <img src="/img/maincharacter2.png" className="decoration character2" alt="character" />
-      <img src="/img/bunnyEnemy.png" className="decoration bunny" alt="bunny" />
-      <img src="/img/chameleon enemy.png" className="decoration chameleon" alt="chameleon" />
-      <img src="/img/MushroomEnemy.png" className="decoration mushroom" alt="mushroom" />
-      <img src="/img/trunkEnemy.png" className="decoration trunk" alt="trunk" />
-      <img src="/img/TerrainBox1.png" className="decoration box1" alt="box" />
-      <img src="/img/TerrainBox3.png" className="decoration box2" alt="box" />
-      <img src="/img/TerrainBox3.png" className="decoration box3" alt="box" />
-      <img src="/img/TerrainBox4.png" className="decoration box4" alt="box" />
-      <img src="/img/TerrainBox1.png" className="decoration box5" alt="box" />
-      <img src="/img/TerrainBox2.png" className="decoration box6" alt="box" />
-      <img src="/img/TerrainBox1.png" className="decoration box7" alt="box" />
-      <img src="/img/TerrainBox4.png" className="decoration box8" alt="box" />
-      <img src="/img/TerrainBox3.png" className="decoration box9" alt="box" />
-      <img src="/img/TerrainBox2.png" className="decoration box10" alt="box" />
-      <img src="/img/TerrainBox1.png" className="decoration box11" alt="box" />
-      <img src="/img/TerrainBox4.png" className="decoration box12" alt="box" />
-      
+      {showFruitAdded && <div className="fruit-toast">✅ +10 🍎 Earned!</div>}
+      <Decorations />
       <header className="app-header">
         <FruitCounter totalFruits={totalFruits} />
       </header>
-
       <main className="app-main">
-        <div className="center-container">
+        <div className={`center-container ${activeTab === 'train' || activeTab === 'test' ? 'wide' : ''}`}>
           <div className="tab-navigation">
-            <button 
-              className={`tab-button ${activeTab === 'training' ? 'active' : ''}`}
-              onClick={() => setActiveTab('training')}
-            >
-              ⏰ Train
-            </button>
-            <button 
-              className={`tab-button ${activeTab === 'test' ? 'active' : ''}`}
-              onClick={() => setActiveTab('test')}
-            >
-              📝 Test
-            </button>
-            <button 
-              className={`tab-button ${activeTab === 'quest' ? 'active' : ''}`}
-              onClick={() => setActiveTab('quest')}
-            >
-              🎮 Quest!
-            </button>
+            {[
+              { key: 'pomodoro', label: '🍎 Pomo' },
+              { key: 'train',    label: '📖 Train' },
+              { key: 'test',     label: '📝 Test' },
+              { key: 'quest',    label: '🎮 Quest' },
+            ].map(({ key, label }) => (
+              <button
+                key={key}
+                className={`tab-button ${activeTab === key ? 'active' : ''}`}
+                onClick={() => setActiveTab(key)}
+              >
+                {label}
+              </button>
+            ))}
           </div>
 
           <div className="main-card">
-            {renderContent()}
+            {activeTab === 'pomodoro' && (
+              <PomodoroTimer
+                mode={pomo.mode}
+                timeLeft={pomo.timeLeft}
+                isRunning={pomo.isRunning}
+                isCompleted={pomo.isCompleted}
+                onModeChange={pomo.changeMode}
+                onStart={pomo.start}
+                onPause={pomo.pause}
+                onReset={pomo.reset}
+              />
+            )}
+            {activeTab === 'train' && (
+              <TrainTab pomodoro={pomo} session={session} nodeStatus={nodeStatus} />
+            )}
+            {activeTab === 'test' && (
+              <TestTab
+                session={session}
+                topic={topic}
+                nodeStatus={nodeStatus}
+                onFruitsEarned={(f) => setTotalFruits(prev => prev + f)}
+                onNewSession={() => { setPhase('start'); setTopic(''); setNodeStatus({}) }}
+              />
+            )}
+            {activeTab === 'quest' && (
+              <div className="quest-placeholder">
+                <QuestGame
+                  fruitCount={totalFruits}
+                  resetFruits={() => setTotalFruits(0)}
+                />
+              </div>
+            )}
           </div>
         </div>
       </main>
     </div>
   )
 }
-function FruitAddedToast() {
+
+function Decorations() {
   return (
-    <div className="fruit-toast">
-      ✅ Fruit added!
-    </div>
+    <>
+      <img src="/img/maincharacter1.png" className="decoration character1" alt="" />
+      <img src="/img/maincharacter2.png" className="decoration character2" alt="" />
+      <img src="/img/bunnyEnemy.png" className="decoration bunny" alt="" />
+      <img src="/img/chameleon enemy.png" className="decoration chameleon" alt="" />
+      <img src="/img/MushroomEnemy.png" className="decoration mushroom" alt="" />
+      <img src="/img/trunkEnemy.png" className="decoration trunk" alt="" />
+      <img src="/img/TerrainBox1.png" className="decoration box1" alt="" />
+      <img src="/img/TerrainBox3.png" className="decoration box2" alt="" />
+      <img src="/img/TerrainBox3.png" className="decoration box3" alt="" />
+      <img src="/img/TerrainBox4.png" className="decoration box4" alt="" />
+      <img src="/img/TerrainBox1.png" className="decoration box5" alt="" />
+      <img src="/img/TerrainBox2.png" className="decoration box6" alt="" />
+      <img src="/img/TerrainBox1.png" className="decoration box7" alt="" />
+      <img src="/img/TerrainBox4.png" className="decoration box8" alt="" />
+      <img src="/img/TerrainBox3.png" className="decoration box9" alt="" />
+      <img src="/img/TerrainBox2.png" className="decoration box10" alt="" />
+      <img src="/img/TerrainBox1.png" className="decoration box11" alt="" />
+      <img src="/img/TerrainBox4.png" className="decoration box12" alt="" />
+    </>
   )
 }
+
 export default App

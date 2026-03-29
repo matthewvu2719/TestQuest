@@ -30,7 +30,7 @@ html {
 }
 
 .decoration {
-  position: absolute;
+  position: fixed;
   image-rendering: pixelated;
   animation: float 4s ease-in-out infinite;
   pointer-events: none;
@@ -238,6 +238,9 @@ html {
   justify-content: center;
   gap: 12px;
   margin-bottom: 37px;
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .tab-button {
@@ -541,17 +544,18 @@ html {
 }
 
 .title {
-  font-size: 2.25rem;
+  font-size: 1.75rem;
   color: white;
   text-shadow: 3px 3px 0 #000;
   margin-bottom: 19px;
 }
 
 .subtitle {
-  font-size: 1.25rem;
+  font-size: 1rem;
   color: white;
   text-shadow: 2px 2px 0 #000;
   margin-bottom: 37px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .topic-form {
@@ -1134,13 +1138,670 @@ html {
   .hero-title {
     font-size: 2.5rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.2rem;
   }
-  
+
   .landing-features {
     grid-template-columns: 1fr;
     padding: 30px 20px;
   }
+}
+
+/* ============================================================
+   Phase 3 — New Styles
+   ============================================================ */
+
+/* Node status loading list */
+.node-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 30px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.node-status-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.125rem;
+  color: white;
+  text-shadow: 1px 1px 0 #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.node-status-item.done {
+  opacity: 1;
+}
+
+.node-status-item.waiting {
+  opacity: 0.6;
+}
+
+.node-icon {
+  font-size: 1.25rem;
+  width: 28px;
+  text-align: center;
+}
+
+@keyframes hourglass-flip {
+  0%   { transform: rotate(0deg); }
+  45%  { transform: rotate(0deg); }
+  55%  { transform: rotate(180deg); }
+  100% { transform: rotate(180deg); }
+}
+
+.hourglass-spin {
+  display: inline-block;
+  animation: hourglass-flip 1.4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Pomodoro Strip (compact) */
+.pomodoro-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 10px 20px;
+  background-image: url('/img/button2.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  margin-bottom: 0;
+}
+
+.strip-mode {
+  font-size: 1.2rem;
+  color: white;
+  text-shadow: 1px 1px 0 #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.strip-time {
+  font-size: 2rem;
+  color: white;
+  font-weight: bold;
+  text-shadow: 2px 2px 0 #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.strip-btn {
+  background: rgba(149, 186, 245, 0.9);
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.strip-btn:hover:not(:disabled) {
+  background: rgba(255, 0, 163, 0.4);
+}
+
+.strip-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Sub-tab navigation (inside Train and Test tabs) */
+.sub-tab-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.sub-tab-btn {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 1.25rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-shadow: 1px 1px 0 #000;
+  font-family: 'Minecraft', sans-serif;
+}
+
+.sub-tab-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.sub-tab-btn.active {
+  background-color: rgba(149, 186, 245, 0.4);
+  color: white;
+  box-shadow: none;
+}
+
+/* Sub-tab content area */
+.sub-tab-content {
+  padding: 30px 25px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Train Tab */
+.train-tab {
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+}
+
+/* Notes Viewer */
+.notes-viewer {
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.7;
+  max-width: min(760px, 100%);
+  margin: 0 auto;
+}
+
+.notes-markdown h1,
+.notes-markdown h2,
+.notes-markdown h3 {
+  color: white;
+  text-shadow: 2px 2px 0 #000;
+  margin: 20px 0 10px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.notes-markdown h1 { font-size: 1.6rem; }
+.notes-markdown h2 { font-size: 1.35rem; }
+.notes-markdown h3 { font-size: 1.15rem; }
+
+.notes-markdown p,
+.notes-markdown ul,
+.notes-markdown ol,
+.notes-markdown li,
+.notes-markdown strong,
+.notes-markdown em,
+.notes-markdown code,
+.notes-markdown pre {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.notes-markdown p {
+  color: rgba(255, 255, 255, 0.92);
+  margin-bottom: 12px;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+}
+
+.notes-markdown ul,
+.notes-markdown ol {
+  padding-left: 20px;
+  margin-bottom: 12px;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+}
+
+.notes-markdown li {
+  margin-bottom: 6px;
+}
+
+.notes-markdown strong {
+  color: white;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.notes-markdown code {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 2px 6px;
+  font-size: 0.9em;
+  color: #7dd3fc;
+}
+
+.notes-markdown pre {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 14px;
+  overflow-x: auto;
+  margin-bottom: 14px;
+}
+
+.notes-markdown pre code {
+  background: none;
+  padding: 0;
+  color: #7dd3fc;
+}
+
+/* Mermaid diagram */
+.mermaid-chart {
+  margin: 20px 0;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+}
+
+.mermaid-chart svg {
+  max-width: 100%;
+}
+
+/* Flashcard Deck */
+.flashcard-deck {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  gap: 16px;
+  max-width: min(600px, 100%);
+  margin: 0 auto;
+}
+
+.flashcard-counter {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.flashcard {
+  width: 100%;
+  height: 220px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.55s;
+  transform-style: preserve-3d;
+}
+
+.flashcard.flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  font-size: 1.1rem;
+  text-align: center;
+  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.flashcard-front {
+  background: rgba(149, 186, 245, 0.85);
+  color: white;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.flashcard-back {
+  background: rgba(255, 20, 147, 0.5);
+  color: white;
+  text-shadow: 1px 1px 0 #000;
+  transform: rotateY(180deg);
+}
+
+.flashcard-hint {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  text-shadow: 1px 1px 0 #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.flashcard-controls {
+  display: flex;
+  gap: 16px;
+}
+
+/* Test Tab */
+.test-tab {
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.exam-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: min(760px, 100%);
+  margin: 0 auto;
+}
+
+.exam-question .question-text {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+.short-answer-input {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.long-answer-input {
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.95);
+  resize: vertical;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin-top: 8px;
+}
+
+.exam-submit-row {
+  padding: 16px 25px;
+  display: flex;
+  justify-content: center;
+  border-top: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Results panel */
+.main-card .quiz-card.results-panel {
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-image: none !important;
+  background-color: rgba(10, 10, 25, 0.88);
+  justify-content: flex-start;
+}
+
+.results-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 25px 16px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+  max-width: 100%;
+  background-image: url('/img/quest - Copy.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  width: 100%;
+  align-self: center;
+}
+
+.insights-section-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  max-width: 720px;
+  width: 100%;
+  align-self: center;
+}
+
+.results-title {
+  color: white;
+  text-shadow: 3px 3px 0 #000;
+  font-size: 2rem;
+}
+
+.results-score {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 3px 3px 0 #000;
+}
+
+.results-mcq-detail {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 0 #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.results-breakdown {
+  display: flex;
+  gap: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.insights-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 25px;
+  overflow: hidden;
+  min-height: 0;
+  width: 100%;
+}
+
+.insights-title {
+  color: white;
+  text-shadow: 2px 2px 0 #000;
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.insights-body {
+  flex: 1;
+  background: none;
+  padding: 4px 0;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-align: left;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.insights-body * {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+.insights-body p { margin-bottom: 8px; }
+.insights-body ul, .insights-body ol { padding-left: 18px; margin-bottom: 8px; }
+.insights-body li { margin-bottom: 4px; }
+.insights-body strong { color: white; }
+
+.results-footer {
+  flex-shrink: 0;
+  padding: 14px 25px;
+  display: flex;
+  justify-content: center;
+  background-image: url('/img/button2.png');
+  background-size: 100% 100%;
+}
+
+.new-session-btn {
+  font-size: 1.1rem;
+}
+
+/* Results review */
+.results-review {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  background-image: url('/img/body.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.review-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-question {
+  border-left: 4px solid rgba(255, 255, 255, 0.2);
+  padding-left: 12px;
+}
+
+.review-question.correct {
+  border-left-color: #4caf50;
+}
+
+.review-question.wrong {
+  border-left-color: #f44336;
+}
+
+.review-question-text {
+  color: white;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.review-answers {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.review-answer {
+  padding: 6px 10px;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+.review-answer.review-correct {
+  color: #81c784;
+  font-weight: bold;
+}
+
+.review-answer.review-wrong {
+  color: #e57373;
+  text-decoration: line-through;
+}
+
+.review-answer-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+.review-your-answer,
+.review-sample-answer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+}
+
+.review-your-answer {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.review-sample-answer {
+  background: rgba(76, 175, 80, 0.1);
+  border-left: 3px solid #4caf50;
+}
+
+.review-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 2px;
+}
+
+.review-your-answer span:last-child,
+.review-sample-answer span:last-child,
+.review-your-answer p,
+.review-sample-answer p {
+  color: rgba(255, 255, 255, 0.9);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Wide container for Train / Test tabs */
+.center-container.wide {
+  max-width: clamp(500px, 75vw, 1100px);
+}
+
+.exam-content-wrap {
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.train-tab,
+.test-tab {
+  background: none !important;
+  image-rendering: pixelated;
+}
+
+/* Sub-tab nav buttons bar — image per button, not container */
+.sub-tab-btn {
+  background-image: url('/img/button2.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+/* Content panel */
+.train-tab .sub-tab-content {
+  background-image: url('/img/body2.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  padding-bottom: 60px;
+}
+
+.test-tab .sub-tab-content {
+  background-image: url('/img/body.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+/* Footer / submit row */
+.exam-submit-row {
+  background-image: url('/img/button2.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  border-top: none;
+}
+
+.train-tab .notes-markdown h1,
+.train-tab .notes-markdown h2,
+.train-tab .notes-markdown h3,
+.train-tab .notes-markdown p,
+.train-tab .notes-markdown li,
+.train-tab .notes-markdown ul,
+.train-tab .notes-markdown ol,
+.train-tab .notes-markdown strong,
+.train-tab .notes-markdown code,
+.test-tab .question-text,
+.test-tab .exam-question {
+  max-width: 720px;
+}
+
+.center-container.wide .main-card {
+  min-height: unset;
+  height: auto;
+}
+
+.center-container.wide .sub-tab-content {
+  max-height: unset;
+  height: auto;
+  padding: 30px 37px 60px;
 }

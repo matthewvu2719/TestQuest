@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+#plan
+*.md
+
 # Build outputs
 dist/
 *.local
@@ -31,8 +34,15 @@ lerna-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+backend/.env
 
 # OS files
 Thumbs.db
+
+# Python
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+*.pyc
 
 
