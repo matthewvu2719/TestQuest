@@ -32,6 +32,7 @@ def _embed(text: str) -> list[float]:
             result = client.models.embed_content(
                 model="gemini-embedding-001",
                 contents=text[:8000],
+                config={"output_dimensionality": 768},
             )
             return result.embeddings[0].values
         except Exception as e:
