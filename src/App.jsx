@@ -164,6 +164,7 @@ function App() {
                 session={session}
                 topic={topic}
                 nodeStatus={nodeStatus}
+                userId={userId}
                 onFruitsEarned={(f) => setTotalFruits(prev => prev + f)}
                 onNewSession={() => { setPhase('start'); setTopic(''); setNodeStatus({}) }}
               />
