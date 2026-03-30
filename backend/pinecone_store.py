@@ -1,7 +1,7 @@
 import os
 import hashlib
 from pinecone import Pinecone
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from google import genai
 
 _pc = None
 _index = None
@@ -24,15 +24,16 @@ _EMBED_KEYS = [k for k in [
 
 
 def _embed(text: str) -> list[float]:
-    """Embed text using Google text-embedding-004 (768 dims), with key fallback."""
+    """Embed text using gemini-embedding-001 (768 dims), with key fallback."""
     last_err = None
     for key in _EMBED_KEYS:
         try:
-            embedder = GoogleGenerativeAIEmbeddings(
-                model="models/text-embedding-004",
-                google_api_key=key,
+            client = genai.Client(api_key=key)
+            result = client.models.embed_content(
+                model="gemini-embedding-001",
+                contents=text[:8000],
             )
-            return embedder.embed_query(text[:8000])
+            return result.embeddings[0].values
         except Exception as e:
             last_err = e
             continue
