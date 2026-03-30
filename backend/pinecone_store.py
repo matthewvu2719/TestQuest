@@ -1,7 +1,7 @@
 import os
 import hashlib
 from pinecone import Pinecone
-from google import genai
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 _pc = None
 _index = None
@@ -28,12 +28,11 @@ def _embed(text: str) -> list[float]:
     last_err = None
     for key in _EMBED_KEYS:
         try:
-            client = genai.Client(api_key=key)
-            result = client.models.embed_content(
-                model="text-embedding-004",
-                contents=text[:8000],
+            embedder = GoogleGenerativeAIEmbeddings(
+                model="models/text-embedding-004",
+                google_api_key=key,
             )
-            return result.embeddings[0].values
+            return embedder.embed_query(text[:8000])
         except Exception as e:
             last_err = e
             continue
