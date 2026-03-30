@@ -65,7 +65,7 @@ function LandingPage({ onEnterApp }) {
             <img src="/img/bunnyEnemy.png" alt="Bunny" className="quest-bunny" />
             <div className="feature-icon">🎮</div>
             <h3>Quest!</h3>
-            <p>Spend your earned fruits to battle enemies in an RPG adventure</p>
+            <p>Spend your earned fruits to battle enemies in an pixel adventure</p>
           </div>
         </div>
 
