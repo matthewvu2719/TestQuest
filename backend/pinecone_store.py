@@ -65,6 +65,7 @@ def query_similar(topic: str, user_id: str, top_k: int = 3) -> list[dict]:
                 "insights_snippet": meta.get("insights_snippet", ""),
                 "flashcards_snippet": meta.get("flashcards_snippet", ""),
             })
+        print(f"[Pinecone] query '{topic}' → {len(past)} past sessions retrieved")
         return past
     except Exception as e:
         print(f"[Pinecone] query error: {e}")
@@ -103,5 +104,6 @@ def store_session(topic: str, notes: str, user_id: str,
                 "flashcards_snippet": flashcards_text[:200] if flashcards_text else "",
             },
         }])
+        print(f"[Pinecone] stored session '{topic}' for user '{user_id}'")
     except Exception as e:
         print(f"[Pinecone] upsert error: {e}")
