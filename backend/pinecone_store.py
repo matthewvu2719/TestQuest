@@ -42,8 +42,8 @@ def _embed(text: str) -> list[float]:
 
 def query_similar(topic: str, user_id: str, top_k: int = 3) -> list[dict]:
     """
-    Query Pinecone for past session notes similar to the given topic.
-    Returns list of { topic, notes_snippet } dicts.
+    Query Pinecone for past sessions similar to the given topic.
+    Returns list of { topic, notes_snippet, insights_snippet, flashcards_snippet } dicts.
     """
     try:
         index = _get_index()
@@ -62,6 +62,8 @@ def query_similar(topic: str, user_id: str, top_k: int = 3) -> list[dict]:
             past.append({
                 "topic": meta.get("topic", ""),
                 "notes_snippet": meta.get("notes_snippet", ""),
+                "insights_snippet": meta.get("insights_snippet", ""),
+                "flashcards_snippet": meta.get("flashcards_snippet", ""),
             })
         return past
     except Exception as e:
@@ -69,22 +71,36 @@ def query_similar(topic: str, user_id: str, top_k: int = 3) -> list[dict]:
         return []
 
 
-def store_session(topic: str, notes: str, user_id: str):
+def store_session(topic: str, notes: str, user_id: str,
+                  flashcards: list = None, insights: str = ""):
     """
-    Embed and upsert session notes into Pinecone.
+    Embed and upsert session notes + flashcards + insights into Pinecone.
     ID is deterministic so re-running the same topic updates rather than duplicates.
     """
     try:
         index = _get_index()
-        vector = _embed(notes[:8000])
+
+        # Combine all content for a richer embedding
+        flashcards_text = ""
+        if flashcards:
+            flashcards_text = " ".join(
+                f"{f.get('front', '')}: {f.get('back', '')}"
+                for f in flashcards[:20]
+            )
+
+        combined = f"{notes}\n\n{flashcards_text}\n\n{insights}"
+        vector = _embed(combined[:8000])
         doc_id = hashlib.md5(f"{user_id}:{topic}".encode()).hexdigest()
+
         index.upsert(vectors=[{
             "id": doc_id,
             "values": vector,
             "metadata": {
                 "user_id": user_id,
                 "topic": topic,
-                "notes_snippet": notes[:1000],
+                "notes_snippet": notes[:500],
+                "insights_snippet": insights[:300] if insights else "",
+                "flashcards_snippet": flashcards_text[:200] if flashcards_text else "",
             },
         }])
     except Exception as e:

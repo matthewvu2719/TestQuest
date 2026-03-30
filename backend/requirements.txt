@@ -10,3 +10,4 @@ pydantic==2.12.5
 pinecone==8.1.0
 google-genai==1.69.0
 json-repair==0.58.7
+trafilatura==2.0.0

@@ -22,6 +22,9 @@ class SubmitRequest(BaseModel):
     short_questions: list[dict]
     long_questions: list[dict]
     user_answers: dict  # { mcq: [], short: [], long: [] }
+    user_id: Optional[str] = None
+    notes: Optional[str] = None
+    flashcards: Optional[list] = None
 
 
 def _calculate_score(mcq: list[dict], mcq_answers: list) -> tuple[float, int]:
@@ -52,17 +55,18 @@ async def start_session(req: StartRequest):
     """
     async def event_stream():
         state = {"topic": req.topic, "user_id": req.user_id}
-        notes_result = {}
+        session_result = {}
 
         async for event in session_graph.astream_events(state, version="v2"):
             kind = event.get("event")
             name = event.get("name", "")
 
-            # Emit when a node finishes
             if kind == "on_chain_end" and name in ("fetch", "notes", "quiz", "flashcards", "visuals"):
                 output = event.get("data", {}).get("output", {})
                 if name == "notes":
-                    notes_result["notes"] = output.get("notes", "")
+                    session_result["notes"] = output.get("notes", "")
+                if name == "flashcards":
+                    session_result["flashcards"] = output.get("flashcards", [])
                 payload = json.dumps({
                     "node": name,
                     "status": "done",
@@ -70,9 +74,14 @@ async def start_session(req: StartRequest):
                 })
                 yield f"data: {payload}\n\n"
 
-        # Store session in Pinecone for future RAG
-        if req.user_id and notes_result.get("notes"):
-            store_session(req.topic, notes_result["notes"], req.user_id)
+        # Store notes + flashcards in Pinecone (insights stored on submit)
+        if req.user_id and session_result.get("notes"):
+            store_session(
+                req.topic,
+                session_result["notes"],
+                req.user_id,
+                flashcards=session_result.get("flashcards"),
+            )
 
         # Signal stream complete
         yield f"data: {json.dumps({'node': 'complete', 'status': 'done'})}\n\n"
@@ -106,9 +115,20 @@ async def submit_session(req: SubmitRequest):
     }
 
     result = await insights_graph.ainvoke(state)
+    insights = result.get("insights", "")
+
+    # Update Pinecone with insights now that we have them
+    if req.user_id and req.notes:
+        store_session(
+            req.topic,
+            req.notes,
+            req.user_id,
+            flashcards=req.flashcards,
+            insights=insights,
+        )
 
     return {
         "score": score,
         "fruits_earned": fruits,
-        "insights": result.get("insights", ""),
+        "insights": insights,
     }

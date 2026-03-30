@@ -5,6 +5,7 @@ from json_repair import repair_json
 from tavily import TavilyClient
 from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, END
+import trafilatura
 
 from .state import SessionState
 from llm import invoke_with_retry
@@ -56,21 +57,27 @@ async def fetch_node(state: SessionState) -> dict:
         max_results=7,
         include_raw_content=True,
     )
-    sources = [
-        {
-            "url": r["url"],
-            "content": r.get("raw_content") or r.get("content", ""),
-        }
-        for r in results.get("results", [])
-        if len(r.get("raw_content") or r.get("content", "")) > 300
-    ]
+    sources = []
+    for r in results.get("results", []):
+        raw = r.get("raw_content") or r.get("content", "")
+        # Clean HTML/boilerplate with trafilatura, fall back to raw if it returns nothing
+        cleaned = trafilatura.extract(raw, include_comments=False, include_tables=False) or raw
+        if len(cleaned) > 300:
+            sources.append({"url": r["url"], "content": cleaned})
 
     # Retrieve past similar sessions from Pinecone
     user_id = state.get("user_id") or ""
     past_sessions = query_similar(state["topic"], user_id, top_k=3)
     past_context = ""
     if past_sessions:
-        parts = [f"**{s['topic']}**:\n{s['notes_snippet']}" for s in past_sessions]
+        parts = []
+        for s in past_sessions:
+            section = f"**{s['topic']}**:\n{s['notes_snippet']}"
+            if s.get("insights_snippet"):
+                section += f"\nStruggled with: {s['insights_snippet']}"
+            if s.get("flashcards_snippet"):
+                section += f"\nKey concepts: {s['flashcards_snippet']}"
+            parts.append(section)
         past_context = "\n\n---\n\n".join(parts)
 
     return {
