@@ -72,11 +72,9 @@ async def fetch_node(state: SessionState) -> dict:
     if past_sessions:
         parts = []
         for s in past_sessions:
-            section = f"**{s['topic']}**:\n{s['notes_snippet']}"
-            if s.get("insights_snippet"):
-                section += f"\nStruggled with: {s['insights_snippet']}"
-            if s.get("flashcards_snippet"):
-                section += f"\nKey concepts: {s['flashcards_snippet']}"
+            section = f"**{s['topic']}**:\n{s['notes']}"
+            if s.get("insights"):
+                section += f"\n\nWhat the user struggled with:\n{s['insights']}"
             parts.append(section)
         past_context = "\n\n---\n\n".join(parts)
 

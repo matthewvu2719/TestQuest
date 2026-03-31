@@ -2,6 +2,7 @@ import os
 import hashlib
 from pinecone import Pinecone
 from google import genai
+from supabase_store import fetch_session
 
 _pc = None
 _index = None
@@ -43,8 +44,8 @@ def _embed(text: str) -> list[float]:
 
 def query_similar(topic: str, user_id: str, top_k: int = 3) -> list[dict]:
     """
-    Query Pinecone for past sessions similar to the given topic.
-    Returns list of { topic, notes_snippet, insights_snippet, flashcards_snippet } dicts.
+    Query Pinecone by topic embedding, fetch full notes + insights from Supabase.
+    Returns list of { topic, notes, insights } dicts.
     """
     try:
         index = _get_index()
@@ -60,11 +61,12 @@ def query_similar(topic: str, user_id: str, top_k: int = 3) -> list[dict]:
             if match["score"] < 0.75:
                 continue
             meta = match.get("metadata", {})
+            doc_id = meta.get("doc_id")
+            session_data = fetch_session(doc_id) if doc_id else {}
             past.append({
                 "topic": meta.get("topic", ""),
-                "notes_snippet": meta.get("notes_snippet", ""),
-                "insights_snippet": meta.get("insights_snippet", ""),
-                "flashcards_snippet": meta.get("flashcards_snippet", ""),
+                "notes": session_data.get("notes", ""),
+                "insights": session_data.get("insights", ""),
             })
         print(f"[Pinecone] query '{topic}' → {len(past)} past sessions retrieved")
         return past
@@ -73,38 +75,24 @@ def query_similar(topic: str, user_id: str, top_k: int = 3) -> list[dict]:
         return []
 
 
-def store_session(topic: str, notes: str, user_id: str,
-                  flashcards: list = None, insights: str = ""):
+def store_session(topic: str, doc_id: str, user_id: str):
     """
-    Embed and upsert session notes + flashcards + insights into Pinecone.
-    ID is deterministic so re-running the same topic updates rather than duplicates.
+    Embed the topic and upsert into Pinecone with a reference to the Supabase doc_id.
     """
     try:
         index = _get_index()
-
-        # Combine all content for a richer embedding
-        flashcards_text = ""
-        if flashcards:
-            flashcards_text = " ".join(
-                f"{f.get('front', '')}: {f.get('back', '')}"
-                for f in flashcards[:20]
-            )
-
-        combined = f"{notes}\n\n{flashcards_text}\n\n{insights}"
-        vector = _embed(combined[:8000])
-        doc_id = hashlib.md5(f"{user_id}:{topic}".encode()).hexdigest()
+        vector = _embed(topic)
+        pinecone_id = hashlib.md5(f"{user_id}:{topic}".encode()).hexdigest()
 
         index.upsert(vectors=[{
-            "id": doc_id,
+            "id": pinecone_id,
             "values": vector,
             "metadata": {
                 "user_id": user_id,
                 "topic": topic,
-                "notes_snippet": notes[:500],
-                "insights_snippet": insights[:300] if insights else "",
-                "flashcards_snippet": flashcards_text[:200] if flashcards_text else "",
+                "doc_id": doc_id,
             },
         }])
-        print(f"[Pinecone] stored session '{topic}' for user '{user_id}'")
+        print(f"[Pinecone] stored reference for '{topic}' → doc_id {doc_id}")
     except Exception as e:
         print(f"[Pinecone] upsert error: {e}")

@@ -30,6 +30,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('pomodoro')
   const [totalFruits, setTotalFruits] = useState(0)
   const [showFruitAdded, setShowFruitAdded] = useState(false)
+  const [docId, setDocId] = useState(null)
 
   const pomo = usePomodoro(() => {
     setTotalFruits(f => f + 10)
@@ -69,6 +70,7 @@ function App() {
           try {
             const payload = JSON.parse(line.slice(6))
             if (payload.node === 'complete') {
+              if (payload.doc_id) setDocId(payload.doc_id)
               setPhase('session')
               setActiveTab('train')
             } else {
@@ -165,6 +167,7 @@ function App() {
                 topic={topic}
                 nodeStatus={nodeStatus}
                 userId={userId}
+                docId={docId}
                 onFruitsEarned={(f) => setTotalFruits(prev => prev + f)}
                 onNewSession={() => { setPhase('start'); setTopic(''); setNodeStatus({}) }}
               />

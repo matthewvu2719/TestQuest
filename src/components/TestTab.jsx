@@ -2,7 +2,7 @@ import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { API_BASE } from '../config'
 
-function TestTab({ session, topic, nodeStatus, userId, onFruitsEarned, onNewSession }) {
+function TestTab({ session, topic, nodeStatus, userId, docId, onFruitsEarned, onNewSession }) {
   const [subTab, setSubTab] = useState('mcq')
   const [mcqAnswers, setMcqAnswers] = useState({})
   const [shortAnswers, setShortAnswers] = useState({})
@@ -155,6 +155,7 @@ function TestTab({ session, topic, nodeStatus, userId, onFruitsEarned, onNewSess
           long_questions: session.long_questions,
           user_answers: { mcq: mcqArr, short: shortArr, long: longArr },
           user_id: userId,
+          doc_id: docId,
           notes: session.notes,
           flashcards: session.flashcards,
         }),

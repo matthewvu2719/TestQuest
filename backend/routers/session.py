@@ -5,7 +5,8 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from graphs.session_graph import session_graph, insights_graph
-from pinecone_store import store_session
+from pinecone_store import store_session, query_similar
+from supabase_store import insert_session, update_insights
 
 router = APIRouter(prefix="/api/session")
 
@@ -23,8 +24,7 @@ class SubmitRequest(BaseModel):
     long_questions: list[dict]
     user_answers: dict  # { mcq: [], short: [], long: [] }
     user_id: Optional[str] = None
-    notes: Optional[str] = None
-    flashcards: Optional[list] = None
+    doc_id: Optional[str] = None
 
 
 def _calculate_score(mcq: list[dict], mcq_answers: list) -> tuple[float, int]:
@@ -74,17 +74,15 @@ async def start_session(req: StartRequest):
                 })
                 yield f"data: {payload}\n\n"
 
-        # Store notes + flashcards in Pinecone (insights stored on submit)
+        # Store notes in Supabase, then reference in Pinecone
+        doc_id = None
         if req.user_id and session_result.get("notes"):
-            store_session(
-                req.topic,
-                session_result["notes"],
-                req.user_id,
-                flashcards=session_result.get("flashcards"),
-            )
+            doc_id = insert_session(req.user_id, req.topic, session_result["notes"])
+            if doc_id:
+                store_session(req.topic, doc_id, req.user_id)
 
-        # Signal stream complete
-        yield f"data: {json.dumps({'node': 'complete', 'status': 'done'})}\n\n"
+        # Signal stream complete, pass doc_id to frontend
+        yield f"data: {json.dumps({'node': 'complete', 'status': 'done', 'doc_id': doc_id})}\n\n"
 
     return StreamingResponse(
         event_stream(),
@@ -117,15 +115,9 @@ async def submit_session(req: SubmitRequest):
     result = await insights_graph.ainvoke(state)
     insights = result.get("insights", "")
 
-    # Update Pinecone with insights now that we have them
-    if req.user_id and req.notes:
-        store_session(
-            req.topic,
-            req.notes,
-            req.user_id,
-            flashcards=req.flashcards,
-            insights=insights,
-        )
+    # Update Supabase with insights
+    if req.doc_id and insights:
+        update_insights(req.doc_id, insights)
 
     return {
         "score": score,
