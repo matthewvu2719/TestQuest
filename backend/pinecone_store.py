@@ -1,5 +1,6 @@
 import os
 import hashlib
+import time
 from pinecone import Pinecone
 from google import genai
 from supabase_store import fetch_session
@@ -82,7 +83,7 @@ def store_session(topic: str, doc_id: str, user_id: str):
     try:
         index = _get_index()
         vector = _embed(topic)
-        pinecone_id = hashlib.md5(f"{user_id}:{topic}".encode()).hexdigest()
+        pinecone_id = hashlib.md5(f"{user_id}:{topic}:{time.time()}".encode()).hexdigest()
 
         index.upsert(vectors=[{
             "id": pinecone_id,
