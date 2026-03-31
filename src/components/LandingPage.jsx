@@ -80,7 +80,7 @@ function LandingPage({ onEnterApp }) {
             <div className="step-card">
               <div className="step-number">02</div>
               <h4>AI Builds Your Session</h4>
-              <p>Lecture notes, flashcards, diagrams, and a full exam are generated automatically using Gemini AI and Tavily RAG.</p>
+              <p>Lecture notes, flashcards, diagrams, a full exam and personalized insights are generated automatically using Gemini AI and Tavily.</p>
             </div>
             <div className="step-card">
               <div className="step-number">03</div>
@@ -90,7 +90,7 @@ function LandingPage({ onEnterApp }) {
             <div className="step-card">
               <div className="step-number">04</div>
               <h4>Take the Exam</h4>
-              <p>10 MCQ, 10 short answer, 2 long answer questions. Get personalized AI feedback on your weak spots.</p>
+              <p>10 MCQ, 10 short answer, 2 long answer questions. Get personalized insights on your weak spots.</p>
             </div>
             <div className="step-card">
               <div className="step-number">05</div>
@@ -110,9 +110,9 @@ function LandingPage({ onEnterApp }) {
           <div className="tech-grid">
             <span className="tech-badge">React + Vite</span>
             <span className="tech-badge">Python + FastAPI</span>
-            <span className="tech-badge">LangGraph</span>
-            <span className="tech-badge">Gemini AI</span>
-            <span className="tech-badge">Tavily RAG</span>
+            <span className="tech-badge">LangGraph + LangSmith</span>
+            <span className="tech-badge">Gemini</span>
+            <span className="tech-badge">Tavily</span>
             <span className="tech-badge">Pinecone</span>
             <span className="tech-badge">Clerk Auth</span>
             <span className="tech-badge">Docker</span>
