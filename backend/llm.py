@@ -62,6 +62,10 @@ def invoke_with_retry(messages: list[BaseMessage]) -> any:
                     _exhausted.add((model, key))
                     last_error = e
                     continue
+                if "503" in err or "UNAVAILABLE" in err:
+                    logger.warning(f"[LLM] Overloaded (503): {model} / ...{key[-6:]}, trying next key")
+                    last_error = e
+                    continue
                 if "404" in err or "NOT_FOUND" in err:
                     logger.warning(f"[LLM] Model not found: {model}, skipping all keys")
                     # Mark all keys as exhausted for this invalid model
